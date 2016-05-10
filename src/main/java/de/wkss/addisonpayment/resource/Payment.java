@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,7 +29,7 @@ public class Payment {
 
     private static final Logger logger = LoggerFactory.getLogger(Payment.class);
 
-    @Autowired
+    @Inject
     private PayPalService payPalService;
 
     @ApiOperation(value = "listPayments")
