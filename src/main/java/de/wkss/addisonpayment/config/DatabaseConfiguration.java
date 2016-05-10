@@ -38,25 +38,28 @@ public class DatabaseConfiguration {
     public JedisConnectionFactory jedisConnFactory() {
 
         try {
-            String redisUri = System.getenv("REDIS_URL");
-            URI redistogoUri = new URI(redisUri);
+            URI redistogoUri = new URI(System.getenv("REDIS_URL"));
 
             JedisConnectionFactory jedisConnFactory = new JedisConnectionFactory();
 
             jedisConnFactory.setUsePool(true);
             jedisConnFactory.setHostName(redistogoUri.getHost());
             jedisConnFactory.setPort(redistogoUri.getPort());
+            jedisConnFactory.setPassword(redistogoUri.getUserInfo().split(":", 2)[1]);
+
+//            jedisConnFactory.setHostName("ec2-54-227-251-101.compute-1.amazonaws.com");
+//            jedisConnFactory.setPort(17029);
+//            jedisConnFactory.setPassword("p6rbltb5qut229cs5nkkc6vcj0s");
+
             jedisConnFactory.setTimeout(Protocol.DEFAULT_TIMEOUT);
-//            jedisConnFactory.setPassword(redistogoUri.getUserInfo().split(":", 2)[1]);
 
             return jedisConnFactory;
 
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             e.printStackTrace();
             return null;
         }
-
-
     }
 
     @Bean

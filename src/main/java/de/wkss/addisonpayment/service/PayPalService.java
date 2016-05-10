@@ -1,10 +1,12 @@
-package de.wkss.addisonpayment.PayPal;
+package de.wkss.addisonpayment.service;
 
 import de.wkss.addisonpayment.domain.Payment;
 import de.wkss.addisonpayment.repository.PaymentRepository;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public class PayPalService {
 
     public List<Payment> listPayments() {
         Payment o = new Payment();
-        o.setId("1");
+        o.setId(new BigInteger(130, new SecureRandom()).toString(32));
         paymentRepo.save(o);
 
         return paymentRepo.findAll();
