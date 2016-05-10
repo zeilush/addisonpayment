@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -jar /app/tmp/cache/.m2/repository/de/wkss/addisonpayment/1.0.0-SNAPSHOT/addisonpayment-1.0.0-SNAPSHOT.jar
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar target/addisonpayment-1.0.0-SNAPSHOT.jar
