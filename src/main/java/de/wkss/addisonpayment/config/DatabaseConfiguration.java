@@ -12,6 +12,9 @@ import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Protocol;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 /**
  * Created by Artur.Zeiler on 10.05.2016.
  */
@@ -34,15 +37,26 @@ public class DatabaseConfiguration {
     @Bean
     public JedisConnectionFactory jedisConnFactory() {
 
-        JedisConnectionFactory jedisConnFactory = new JedisConnectionFactory();
+        try {
+            String redisUri = System.getenv("REDIS_URL");
+            URI redistogoUri = new URI(redisUri);
 
-        jedisConnFactory.setUsePool(true);
-        jedisConnFactory.setHostName(host);
-        jedisConnFactory.setPort(port);
-        jedisConnFactory.setTimeout(Protocol.DEFAULT_TIMEOUT);
+            JedisConnectionFactory jedisConnFactory = new JedisConnectionFactory();
+
+            jedisConnFactory.setUsePool(true);
+            jedisConnFactory.setHostName(redistogoUri.getHost());
+            jedisConnFactory.setPort(redistogoUri.getPort());
+            jedisConnFactory.setTimeout(Protocol.DEFAULT_TIMEOUT);
 //            jedisConnFactory.setPassword(redistogoUri.getUserInfo().split(":", 2)[1]);
 
-        return jedisConnFactory;
+            return jedisConnFactory;
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
     }
 
     @Bean
