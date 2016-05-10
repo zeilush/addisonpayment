@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -16,6 +15,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Created by Artur.Zeiler on 10.05.2016.
@@ -37,8 +37,8 @@ public class Payment {
             @ApiResponse(code = 200, message = "Success", response = String.class)})
     @GET
     @Path("/list")
-    public String getOrder() {
-        logger.info("do payment");
-        return payPalService.createPayment();
+    public List<de.wkss.addisonpayment.domain.Payment> listPayments() {
+        logger.info("list payment");
+        return payPalService.listPayments();
     }
 }
