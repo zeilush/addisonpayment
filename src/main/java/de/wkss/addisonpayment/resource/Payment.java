@@ -2,6 +2,9 @@ package de.wkss.addisonpayment.resource;
 
 import de.wkss.addisonpayment.PayPal.PayPalService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class Payment {
     @Autowired
     private PayPalService payPalService;
 
+    @ApiOperation(value = "listPayments")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = String.class)})
     @GET
     @Path("/list")
     public String getOrder() {

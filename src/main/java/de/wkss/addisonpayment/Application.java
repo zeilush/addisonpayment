@@ -2,6 +2,7 @@ package de.wkss.addisonpayment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
  * Created by Artur.Zeiler on 10.05.2016.
