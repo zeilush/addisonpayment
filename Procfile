@@ -1,3 +1,1 @@
-web: java -Xmx384m -Xss512k -XX:+UseCompressedOops -jar target/*.jar
---spring.profiles.active=prod
---server.port=$PORT
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar target/*jar
