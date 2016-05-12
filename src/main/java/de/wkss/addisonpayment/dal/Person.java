@@ -1,5 +1,7 @@
 package de.wkss.addisonpayment.dal;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -23,5 +25,10 @@ public class Person implements Serializable {
 
     public void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

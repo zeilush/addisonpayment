@@ -1,20 +1,23 @@
 package de.wkss.addisonpayment.resource;
 
+import com.paypal.base.rest.PayPalRESTException;
+import de.wkss.addisonpayment.common.InvoiceDto;
+import de.wkss.addisonpayment.dal.BillInvoice;
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.dal.StateBill;
 import de.wkss.addisonpayment.dal.StatePayment;
-import de.wkss.addisonpayment.domain.Invoice;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
-import de.wkss.addisonpayment.service.PayPalService;
+import de.wkss.addisonpayment.service.PaymentService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,13 +35,7 @@ public class InvoiceController {
     private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
 
     @Autowired
-    private PayPalService payPalService;
-
-    @RequestMapping("/list")
-    public List<Invoice> listPayments() {
-        logger.info("list payment");
-        return payPalService.listInvoices();
-    }
+    private PaymentService paymentService;
 
     @RequestMapping("/invoice/{id}")
     public InvoiceContract getInvoice(@PathVariable String id){
@@ -79,6 +76,17 @@ public class InvoiceController {
 
         return contract;
 
+    }
+
+    @ApiOperation(value = "createPayPalPayment", nickname = "createPayPalPayment")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = BillInvoice.class),
+            @ApiResponse(code = 500, message = "Failure")})
+    @RequestMapping(method = RequestMethod.POST)
+    public BillInvoice createInvoice(@RequestBody InvoiceDto invoice) throws PayPalRESTException {
+        logger.info("REST API create invoice: " + invoice);
+
+        return paymentService.createPayPalPayment(invoice);
     }
 
 }

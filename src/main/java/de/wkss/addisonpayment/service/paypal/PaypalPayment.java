@@ -3,6 +3,7 @@ package de.wkss.addisonpayment.service.paypal;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by Julian.donauer on 12.05.2016.
  */
+@Component
 public class PaypalPayment extends PaypalPayments {
     public PaypalPayment() throws PayPalRESTException {
         super();

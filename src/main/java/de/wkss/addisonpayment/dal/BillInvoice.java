@@ -1,8 +1,11 @@
 package de.wkss.addisonpayment.dal;
 
+import de.wkss.addisonpayment.common.PaymentServiceType;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.UUID;
 
 /**
  * Created by jan.plitschka on 12.05.2016.
@@ -10,19 +13,23 @@ import java.util.Base64;
 public class BillInvoice implements Serializable {
 
     private String id;
-    private Person biller;
-    private double amount;
+    private Biller biller;
+    private String amount;
     private String description;
     private Base64 reason;
     private StateBill state;
     private PaymentServiceData paymentServiceData;
     private LocalDate timestamp;
 
-    public double getAmount() {
+    public BillInvoice() {
+        id = UUID.randomUUID().toString();
+    }
+
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
@@ -36,10 +43,6 @@ public class BillInvoice implements Serializable {
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Base64 getReason() {
@@ -65,11 +68,11 @@ public class BillInvoice implements Serializable {
     public void setState(StateBill state) {
         this.state = state;
     }
-    public Person getBiller() {
+    public Biller getBiller() {
         return biller;
     }
 
-    public void setBiller(Person biller) {
+    public void setBiller(Biller biller) {
         this.biller = biller;
     }
 
