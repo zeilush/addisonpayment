@@ -11,6 +11,10 @@ public class Person implements Serializable {
     private String referenceId;
     private String name;
 
+    public Person(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
     public String getName() {
         return name;
     }
