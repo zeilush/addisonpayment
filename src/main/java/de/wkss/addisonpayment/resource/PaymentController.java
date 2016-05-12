@@ -132,6 +132,6 @@ public class PaymentController {
 
         paymentService.executePayment(dto);
 
-        logger.info("REST API execute comnpleted");
+        logger.info("REST API execute completed");
     }
 }

@@ -1,5 +1,7 @@
 package de.wkss.addisonpayment.dto;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 /**
  * Created by Artur.Zeiler on 12.05.2016.
  */
@@ -22,5 +24,10 @@ public class ExcecutePayPalPaymentDto {
 
     public void setPaymentId(String paymentId) {
         this.paymentId = paymentId;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

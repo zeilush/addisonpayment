@@ -68,7 +68,7 @@ public class PaymentService {
             return;
         }
 
-        logger.info("payment for payer {} with paymentId {} already done" + paymentInvoice.getPayer(), dto.getPaymentId());
+        logger.info("payment for payer {} with paymentId {} already done", paymentInvoice.getPayer(), dto.getPaymentId());
     }
 
     private void executePayout(String billInvoiceId) throws PayPalRESTException {
@@ -77,6 +77,7 @@ public class PaymentService {
         BillInvoice billInvoice = repo.findById(billInvoiceId);
 
         if(billInvoice.getState().equals(StateBill.OPEN)) {
+            //check if all payments associated with the bill are paid
             boolean doPayout = paymentInvoiceRepository.findPayments(billInvoice.getId()).stream().filter(p -> p.getState() == StatePayment.OPEN).count() == 0;
 
             if(doPayout) {
@@ -90,6 +91,12 @@ public class PaymentService {
 
                 logger.info("payout executed for bill invoice id {}", billInvoiceId);
             }
+            else {
+                logger.info("not all payments for bill {} are paid. payout can't be executed", billInvoiceId);
+            }
+        }
+        else {
+            logger.info("payout for bill {} already done", billInvoiceId);
         }
     }
 

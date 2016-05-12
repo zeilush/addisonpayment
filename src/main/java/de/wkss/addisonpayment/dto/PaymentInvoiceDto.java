@@ -1,6 +1,7 @@
 package de.wkss.addisonpayment.dto;
 
 import de.wkss.addisonpayment.domain.Person;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * Created by Artur.Zeiler on 12.05.2016.
@@ -23,5 +24,10 @@ public class PaymentInvoiceDto {
 
     public void setPaymentId(String paymentId) {
         this.paymentId = paymentId;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

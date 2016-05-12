@@ -51,11 +51,6 @@ public class InvoiceDto {
         this.biller = biller;
     }
 
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
-
     public PaymentServiceType getPaymentServiceType() {
         return paymentServiceType;
     }
@@ -78,5 +73,10 @@ public class InvoiceDto {
 
     public void setReturnUrl(String returnUrl) {
         this.returnUrl = returnUrl;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }
