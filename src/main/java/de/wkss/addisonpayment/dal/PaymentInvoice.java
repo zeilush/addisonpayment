@@ -12,6 +12,7 @@ public class PaymentInvoice implements Serializable {
     private String billInvoiceId;
     private PaymentServiceData serviceData;
     private StatePayment state = StatePayment.OPEN;
+    private String approvalLink;
 
     public PaymentInvoice() {
 
@@ -73,4 +74,11 @@ public class PaymentInvoice implements Serializable {
         this.state = state;
     }
 
+    public String getApprovalLink() {
+        return approvalLink;
+    }
+
+    public void setApprovalLink(String approvalLink) {
+        this.approvalLink = approvalLink;
+    }
 }

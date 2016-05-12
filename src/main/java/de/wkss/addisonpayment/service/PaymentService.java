@@ -1,5 +1,6 @@
 package de.wkss.addisonpayment.service;
 
+import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import de.wkss.addisonpayment.dal.*;
@@ -9,6 +10,7 @@ import de.wkss.addisonpayment.repository.BillRepository;
 import de.wkss.addisonpayment.repository.PaymentInvoiceRepository;
 import de.wkss.addisonpayment.resource.InvoiceController;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
+import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
 import de.wkss.addisonpayment.service.paypal.PaypalPayment;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -58,17 +60,10 @@ public class PaymentService {
             //create payment invoice
             createPaymentInvoice(billInvoice, payer, payment);
 
-//            String approvalUrl = null;
-//            for(Links link : payment.getLinks()) {
-//                if(link.getRel().equals("approval_url")) {
-//                    approvalUrl = link.getHref();
-//                    break;
-//                }
-//            }
-
             PaymentInvoiceDto dto = new PaymentInvoiceDto();
             dto.setPayer(payer);
             dto.setPaymentId(payment.getId());
+
 
             paymentInvoiceDto.add(dto);
 
@@ -89,7 +84,17 @@ public class PaymentService {
     private void createPaymentInvoice(BillInvoice billInvoice, Person payer, Payment payment) {
         personService.createPerson(payer);
 
+
+        String approvalUrl = null;
+        for(Links link : payment.getLinks()) {
+            if(link.getRel().equals("approval_url")) {
+                approvalUrl = link.getHref();
+                break;
+            }
+        }
+
         PaymentInvoice paymentInvoice = new PaymentInvoice(billInvoice.getId() + "_" + payment.getId(), payer, payment.getTransactions().get(0).getAmount().getTotal(), billInvoice.getId(), billInvoice.getPaymentServiceData());
+        paymentInvoice.setApprovalLink(approvalUrl);
         paymentInvoiceRepository.save(paymentInvoice);
     }
 
@@ -121,6 +126,25 @@ public class PaymentService {
         billInvoiceContract.setInvoices(collect);
 
         return billInvoiceContract;
+
+    }
+
+    public InvoiceContract lookUpPaymentInvoice(String id){
+        PaymentInvoice singlePayment = paymentInvoiceRepository.findSinglePayment(id);
+
+        if(singlePayment == null){
+            return null;
+        }
+
+        BillInvoice billInvoice = repo.findById(singlePayment.getBillInvoiceId());
+
+        if(billInvoice != null){
+            InvoiceContract contract = new InvoiceContract();
+            contract.read(singlePayment, billInvoice);
+            return contract;
+        }
+
+        return null;
 
     }
 
