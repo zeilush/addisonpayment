@@ -21,9 +21,8 @@ public class PersonService {
     public Person createPerson(Person person) {
         Person personToCreate = personRepository.findById(person.getReferenceId());
 
-        if(personToCreate == null) {
+        if (personToCreate == null) {
             logger.info("create person:{}", person);
-
             personToCreate = personRepository.save(person);
         }
 
