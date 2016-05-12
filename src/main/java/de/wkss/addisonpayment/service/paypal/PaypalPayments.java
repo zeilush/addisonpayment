@@ -9,13 +9,13 @@ import java.io.InputStream;
 /**
  * Created by Julian.donauer on 12.05.2016.
  */
-public abstract class LunchBoxPayments {
+public abstract class PaypalPayments {
 
     protected String accessToken;
 
-    public LunchBoxPayments() throws PayPalRESTException {
+    public PaypalPayments() throws PayPalRESTException {
 
-        InputStream is = LunchBoxPayments.class.getResourceAsStream("/paypal.properties");
+        InputStream is = PaypalPayments.class.getResourceAsStream("/paypal.properties");
         OAuthTokenCredential tokenCredential = Payment.initConfig(is);
 
         accessToken = tokenCredential.getAccessToken();
