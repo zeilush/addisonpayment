@@ -1,11 +1,13 @@
 package de.wkss.addisonpayment.resource;
 
 import de.wkss.addisonpayment.domain.Invoice;
+import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
 import de.wkss.addisonpayment.service.PayPalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,4 +32,14 @@ public class InvoiceController {
         logger.info("list payment");
         return payPalService.listInvoices();
     }
+
+    @RequestMapping("/invoice/{id}")
+    public InvoiceContract getInvoice(@PathVariable String id){
+        InvoiceContract invoiceContract = new InvoiceContract();
+        invoiceContract.setName("<Name Billder>");
+        invoiceContract.setAmount(42);
+        invoiceContract.setDescription("This is a Description");
+        return invoiceContract;
+    }
+
 }
