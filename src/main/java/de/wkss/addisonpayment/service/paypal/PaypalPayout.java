@@ -25,21 +25,23 @@ public class PaypalPayout extends PaypalPayments {
         Random random = new Random();
         senderBatchHeader.setSenderBatchId(
                 new Double(random.nextDouble()).toString()).setEmailSubject(
-                "You have a Payout!");
+                "There is your payout!");
 
         Currency amount = new Currency();
-        amount.setValue("25.00").setCurrency("USD");
+        amount.setValue("31").setCurrency("USD");
 
         PayoutItem senderItem = new PayoutItem();
         senderItem.setRecipientType("Email")
-                .setNote("Thanks for your patronage")
-                .setReceiver("Julian.Donauer-buyer@t-online.de")
-                .setSenderItemId("201404324234").setAmount(amount);
+                .setNote("Thanks for using Lunchbox!")
+                .setReceiver("jdonauer@codegames.de")
+                .setSenderItemId("201404324234")
+                .setAmount(amount);
 
         List<PayoutItem> items = new ArrayList<PayoutItem>();
         items.add(senderItem);
 
-        payout.setSenderBatchHeader(senderBatchHeader).setItems(items);
+        payout.setSenderBatchHeader(senderBatchHeader).
+                setItems(items);
 
         PayoutBatch batch = null;
         try {
