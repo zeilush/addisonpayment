@@ -13,12 +13,15 @@ import de.wkss.addisonpayment.service.PaymentService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.eclipse.jetty.http.HttpURI;
+import org.eclipse.jetty.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +47,37 @@ public class InvoiceController {
         invoiceContract.setAmount(42);
         invoiceContract.setDescription("This is a Description");
         return invoiceContract;
+    }
+
+    @RequestMapping("/approve")
+    public void approveInvoiceGet(HttpServletRequest request){
+
+        logger.info("I will approve this");
+        HttpURI uri = ((Request) request).getUri();
+        logger.info(uri.toString());
+        //comes from webhook
+
+    }
+
+
+
+    @RequestMapping(value = "/approve", method = RequestMethod.POST)
+    public void approveInvoicePost(@RequestBody Object body){
+
+        logger.info("I want to approve");
+        logger.info(body.toString());
+        //comes from webhook
+
+    }
+
+    @RequestMapping(value = "/approve", method = RequestMethod.PUT)
+    public void approveInvoicePut(HttpServletRequest request){
+
+        logger.info("I will approve this");
+        HttpURI uri = ((Request) request).getUri();
+        logger.info(uri.toString());
+        //comes from webhook
+
     }
 
     @RequestMapping("/getAllBillInvoice/{id}")
