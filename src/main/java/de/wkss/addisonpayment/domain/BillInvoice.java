@@ -1,10 +1,6 @@
-package de.wkss.addisonpayment.dal;
-
-import de.wkss.addisonpayment.common.PaymentServiceType;
+package de.wkss.addisonpayment.domain;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Base64;
 import java.util.UUID;
 
 /**

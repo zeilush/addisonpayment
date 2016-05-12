@@ -1,6 +1,6 @@
 package de.wkss.addisonpayment.dto;
 
-import de.wkss.addisonpayment.dal.Person;
+import de.wkss.addisonpayment.domain.Person;
 
 /**
  * Created by Artur.Zeiler on 12.05.2016.

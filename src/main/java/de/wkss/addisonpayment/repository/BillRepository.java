@@ -1,6 +1,6 @@
 package de.wkss.addisonpayment.repository;
 
-import de.wkss.addisonpayment.dal.BillInvoice;
+import de.wkss.addisonpayment.domain.BillInvoice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;

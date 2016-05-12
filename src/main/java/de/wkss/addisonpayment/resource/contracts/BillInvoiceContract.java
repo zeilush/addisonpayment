@@ -1,9 +1,9 @@
 package de.wkss.addisonpayment.resource.contracts;
 
-import de.wkss.addisonpayment.dal.BillInvoice;
-import de.wkss.addisonpayment.dal.PaymentServiceData;
-import de.wkss.addisonpayment.dal.Person;
-import de.wkss.addisonpayment.dal.StateBill;
+import de.wkss.addisonpayment.domain.BillInvoice;
+import de.wkss.addisonpayment.domain.PaymentServiceData;
+import de.wkss.addisonpayment.domain.Person;
+import de.wkss.addisonpayment.domain.StateBill;
 
 import java.time.LocalDate;
 import java.util.LinkedList;

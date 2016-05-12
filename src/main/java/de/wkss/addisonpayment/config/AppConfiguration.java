@@ -2,29 +2,22 @@ package de.wkss.addisonpayment.config;
 
 import static springfox.documentation.builders.PathSelectors.regex;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import de.wkss.addisonpayment.dal.BillInvoice;
-import de.wkss.addisonpayment.dal.PaymentInvoice;
-import de.wkss.addisonpayment.dal.Person;
+import de.wkss.addisonpayment.domain.BillInvoice;
+import de.wkss.addisonpayment.domain.PaymentInvoice;
+import de.wkss.addisonpayment.domain.Person;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.hateoas.HypermediaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import redis.clients.jedis.Protocol;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -141,16 +134,16 @@ public class AppConfiguration {
         return jacksonJsonRedisJsonSerializer;
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        builder.featuresToEnable(
-                JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
-
-        builder.featuresToEnable(
-                JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
-
-        return builder.build();
-    }
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//
+//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+//        builder.featuresToEnable(
+//                JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+//
+//        builder.featuresToEnable(
+//                JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+//
+//        return builder.build();
+//    }
 }

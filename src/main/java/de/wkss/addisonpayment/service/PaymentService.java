@@ -3,17 +3,18 @@ package de.wkss.addisonpayment.service;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
-import de.wkss.addisonpayment.dal.*;
+import de.wkss.addisonpayment.domain.*;
 import de.wkss.addisonpayment.dto.ExcecutePayPalPaymentDto;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
 import de.wkss.addisonpayment.repository.BillRepository;
 import de.wkss.addisonpayment.repository.PaymentInvoiceRepository;
-import de.wkss.addisonpayment.resource.InvoiceController;
+import de.wkss.addisonpayment.resource.PaymentController;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
 import de.wkss.addisonpayment.service.paypal.PaypalPayment;
+import de.wkss.addisonpayment.service.paypal.PaypalPayout;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,16 @@ import java.util.stream.Collectors;
  */
 @Component
 public class PaymentService {
-    private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Autowired
     private BillRepository repo;
 
     @Autowired
     private PaypalPayment paypalPayment;
+
+    @Autowired
+    private PaypalPayout paypalPayout;
 
     @Autowired
     private PersonService personService;
@@ -57,10 +61,36 @@ public class PaymentService {
             paymentInvoice.setState(StatePayment.PAYED);
 
             paymentInvoiceRepository.save(paymentInvoice);
+
+            //check if payout needs to be executed
+            executePayout(paymentInvoice.getBillInvoiceId());
+
             return;
         }
 
         logger.info("payment for payer {} with paymentId {} already done" + paymentInvoice.getPayer(), dto.getPaymentId());
+    }
+
+    private void executePayout(String billInvoiceId) throws PayPalRESTException {
+        logger.info("check execute payout for bill invoice id {}", billInvoiceId);
+
+        BillInvoice billInvoice = repo.findById(billInvoiceId);
+
+        if(billInvoice.getState().equals(StateBill.OPEN)) {
+            boolean doPayout = paymentInvoiceRepository.findPayments(billInvoice.getId()).stream().filter(p -> p.getState() == StatePayment.OPEN).count() == 0;
+
+            if(doPayout) {
+                logger.info("execute payout for bill invoice id {}", billInvoiceId);
+
+                paypalPayout.payOut(billInvoice.getBiller().getEmail(), billInvoice.getAmount());
+
+                billInvoice.setState(StateBill.COMPLETELY_COLLECTED);
+
+                repo.save(billInvoice);
+
+                logger.info("payout executed for bill invoice id {}", billInvoiceId);
+            }
+        }
     }
 
     @Transactional
@@ -99,7 +129,7 @@ public class PaymentService {
 
         Payment payment = paypalPayment.openPayment(amount, invoice.getCancelUrl(), invoice.getReturnUrl());
 
-        logger.info("payment created: {}", ReflectionToStringBuilder.toString(payment));
+        logger.info("payment created: {}", payment.getId());
         return payment;
     }
 
@@ -168,6 +198,5 @@ public class PaymentService {
         }
 
         return null;
-
     }
 }

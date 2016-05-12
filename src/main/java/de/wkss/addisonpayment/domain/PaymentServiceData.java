@@ -1,4 +1,4 @@
-package de.wkss.addisonpayment.dal;
+package de.wkss.addisonpayment.domain;
 
 import de.wkss.addisonpayment.common.PaymentServiceType;
 

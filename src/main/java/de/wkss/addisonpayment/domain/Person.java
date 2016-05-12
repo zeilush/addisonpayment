@@ -1,4 +1,4 @@
-package de.wkss.addisonpayment.dal;
+package de.wkss.addisonpayment.domain;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 

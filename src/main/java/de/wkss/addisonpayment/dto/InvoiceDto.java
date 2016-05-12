@@ -1,8 +1,8 @@
 package de.wkss.addisonpayment.dto;
 
 import de.wkss.addisonpayment.common.PaymentServiceType;
-import de.wkss.addisonpayment.dal.Biller;
-import de.wkss.addisonpayment.dal.Person;
+import de.wkss.addisonpayment.domain.Biller;
+import de.wkss.addisonpayment.domain.Person;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.util.List;

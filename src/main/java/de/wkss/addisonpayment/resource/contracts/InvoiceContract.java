@@ -1,7 +1,7 @@
 package de.wkss.addisonpayment.resource.contracts;
 
-import de.wkss.addisonpayment.dal.BillInvoice;
-import de.wkss.addisonpayment.dal.PaymentInvoice;
+import de.wkss.addisonpayment.domain.BillInvoice;
+import de.wkss.addisonpayment.domain.PaymentInvoice;
 
 /**
  * Created by Julian.donauer on 12.05.2016.

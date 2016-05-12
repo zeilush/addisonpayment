@@ -1,4 +1,4 @@
-package de.wkss.addisonpayment.dal;
+package de.wkss.addisonpayment.domain;
 
 /**
  * Created by Artur.Zeiler on 12.05.2016.

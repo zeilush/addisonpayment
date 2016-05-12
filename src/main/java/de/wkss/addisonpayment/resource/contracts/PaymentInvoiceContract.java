@@ -1,8 +1,8 @@
 package de.wkss.addisonpayment.resource.contracts;
 
-import de.wkss.addisonpayment.dal.PaymentInvoice;
-import de.wkss.addisonpayment.dal.Person;
-import de.wkss.addisonpayment.dal.StatePayment;
+import de.wkss.addisonpayment.domain.PaymentInvoice;
+import de.wkss.addisonpayment.domain.Person;
+import de.wkss.addisonpayment.domain.StatePayment;
 
 /**
  * Created by Julian.donauer on 12.05.2016.
