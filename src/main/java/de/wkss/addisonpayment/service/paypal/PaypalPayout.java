@@ -11,8 +11,8 @@ import java.util.Random;
 /**
  * Created by Julian.donauer on 12.05.2016.
  */
-public class LunchBoxPayout extends LunchBoxPayments {
-    public LunchBoxPayout() throws PayPalRESTException {
+public class PaypalPayout extends PaypalPayments {
+    public PaypalPayout() throws PayPalRESTException {
         super();
     }
 
