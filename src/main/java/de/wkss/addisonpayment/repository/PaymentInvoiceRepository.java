@@ -37,17 +37,14 @@ public class PaymentInvoiceRepository {
         return invoices;
     }
 
-    public PaymentInvoice findSinglePayment(String key){
-
-        PaymentInvoice invoice = null;
-
+    public PaymentInvoice findByPaymentId(String key){
         Set<String> keys = redisTemplate.keys("*_" + key);
         Iterator<String> it = keys.iterator();
         while(it.hasNext()){
-            invoice = findById(it.next());
+            return findById(it.next());
         }
 
-        return invoice;
+        return null;
     }
 
     public PaymentInvoice findById(String key) {

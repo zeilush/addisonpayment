@@ -44,7 +44,6 @@ public class AppConfiguration {
     public Docket documentation() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.any())
                 .paths(regex("/.*"))
                 .build()
                 .pathMapping("/")
@@ -150,7 +149,7 @@ public class AppConfiguration {
                 JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
 
         builder.featuresToEnable(
-                JsonParser.Feature.ALLOW_SINGLE_QUOTES);
+                JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
 
         return builder.build();
     }

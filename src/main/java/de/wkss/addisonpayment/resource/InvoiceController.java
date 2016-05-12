@@ -6,6 +6,7 @@ import de.wkss.addisonpayment.dal.BillInvoice;
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.dal.StateBill;
 import de.wkss.addisonpayment.dal.StatePayment;
+import de.wkss.addisonpayment.dto.ExcecutePayPalPaymentDto;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
@@ -56,18 +57,6 @@ public class InvoiceController {
 
         return invoiceContract;
     }
-
-    @RequestMapping("/approve")
-    public void approveInvoiceGet(HttpServletRequest request){
-
-        logger.info("I will approve this");
-        HttpURI uri = ((Request) request).getUri();
-        logger.info(uri.toString());
-        //comes from webhook
-
-    }
-
-
 
     @RequestMapping(value = "/approve", method = RequestMethod.POST)
     public void approveInvoicePost(@RequestBody PaypalEvent event){
@@ -124,15 +113,26 @@ public class InvoiceController {
 
     }
 
-    @ApiOperation(value = "createPayPalPayment", nickname = "createPayPalPayment")
+    @ApiOperation(value = "createInvoce")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = BillInvoice.class),
+            @ApiResponse(code = 200, message = "Success", response = PaymentInvoiceDto.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Failure")})
     @RequestMapping(method = RequestMethod.POST)
     public List<PaymentInvoiceDto> createInvoice(@RequestBody InvoiceDto invoice) throws PayPalRESTException {
         logger.info("REST API create invoice: " + invoice);
 
         return paymentService.createPayPalPayment(invoice);
+    }
+
+    @ApiOperation(value = "execute PayPal payment")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 500, message = "Failure")})
+    @RequestMapping(value="/payment/paypal" , method = RequestMethod.POST)
+    public void executePayPalPayment(@RequestBody ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
+        logger.info("REST API execute PayPal: " + dto);
+
+        paymentService.executePayment(dto);
     }
 
 }

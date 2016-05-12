@@ -4,6 +4,7 @@ import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import de.wkss.addisonpayment.dal.*;
+import de.wkss.addisonpayment.dto.ExcecutePayPalPaymentDto;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
 import de.wkss.addisonpayment.repository.BillRepository;
@@ -45,6 +46,23 @@ public class PaymentService {
     @Autowired
     private PaymentInvoiceRepository paymentInvoiceRepository;
 
+
+    public void executePayment(ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
+        PaymentInvoice paymentInvoice = paymentInvoiceRepository.findByPaymentId(dto.getPaymentId());
+
+        if(paymentInvoice.getState().equals(StatePayment.OPEN)) {
+            logger.info("execute PayPal payment for payer {}, paymentId {}" + paymentInvoice.getPayer(), dto.getPaymentId());
+            paypalPayment.executePayment(dto.getPaymentId(), dto.getPayerId());
+
+            paymentInvoice.setState(StatePayment.PAYED);
+
+            paymentInvoiceRepository.save(paymentInvoice);
+            return;
+        }
+
+        logger.info("payment for payer {} with paymentId {} already done" + paymentInvoice.getPayer(), dto.getPaymentId());
+    }
+
     @Transactional
     public List<PaymentInvoiceDto> createPayPalPayment(InvoiceDto invoice) throws PayPalRESTException {
         logger.info("create payments, data: {}", invoice);
@@ -70,9 +88,7 @@ public class PaymentService {
             dto.setPayer(payer);
             dto.setPaymentId(payment.getId());
 
-
             paymentInvoiceDto.add(dto);
-
         }
 
         return paymentInvoiceDto;
@@ -90,11 +106,12 @@ public class PaymentService {
     private void createPaymentInvoice(BillInvoice billInvoice, Person payer, Payment payment) {
         personService.createPerson(payer);
 
-
+        String token = null;
         String approvalUrl = null;
         for(Links link : payment.getLinks()) {
             if(link.getRel().equals("approval_url")) {
                 approvalUrl = link.getHref();
+                token = approvalUrl.split("token=")[1];
                 break;
             }
         }
@@ -136,7 +153,7 @@ public class PaymentService {
     }
 
     public InvoiceContract lookUpPaymentInvoice(String id){
-        PaymentInvoice singlePayment = paymentInvoiceRepository.findSinglePayment(id);
+        PaymentInvoice singlePayment = paymentInvoiceRepository.findByPaymentId(id);
 
         if(singlePayment == null){
             return null;
@@ -153,5 +170,4 @@ public class PaymentService {
         return null;
 
     }
-
 }
