@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -52,10 +53,15 @@ public class PaymentService {
 
         List<PaymentInvoiceDto> paymentInvoiceDto = new ArrayList<>(invoice.getPayer().size());
 
+        Double amount = Double.valueOf(billInvoice.getAmount());
+        if(amount != null){
+            amount = amount / invoice.getPayer().size();
+        }
+
         for(Person payer : invoice.getPayer()) {
 
             //create PayPal Payment
-            Payment payment = createPayPalPayment(invoice, payer);
+            Payment payment = createPayPalPayment(invoice, payer, String.format(Locale.US, "%.2f", amount));
 
             //create payment invoice
             createPaymentInvoice(billInvoice, payer, payment);
@@ -72,10 +78,10 @@ public class PaymentService {
         return paymentInvoiceDto;
     }
 
-    private Payment createPayPalPayment(InvoiceDto invoice, Person payer) throws PayPalRESTException {
+    private Payment createPayPalPayment(InvoiceDto invoice, Person payer, String amount) throws PayPalRESTException {
         logger.info("create payment for payer: {}", payer);
 
-        Payment payment = paypalPayment.openPayment(invoice.getAmount(), invoice.getCancelUrl(), invoice.getReturnUrl());
+        Payment payment = paypalPayment.openPayment(amount, invoice.getCancelUrl(), invoice.getReturnUrl());
 
         logger.info("payment created: {}", ReflectionToStringBuilder.toString(payment));
         return payment;
