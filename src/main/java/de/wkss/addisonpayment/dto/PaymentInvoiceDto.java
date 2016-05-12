@@ -7,7 +7,7 @@ import de.wkss.addisonpayment.dal.Person;
  */
 public class PaymentInvoiceDto {
     private Person payer;
-    private String approvalUrl;
+    private String paymentId;
 
     public Person getPayer() {
         return payer;
@@ -17,11 +17,11 @@ public class PaymentInvoiceDto {
         this.payer = payer;
     }
 
-    public String getApprovalUrl() {
-        return approvalUrl;
+    public String getPaymentId() {
+        return paymentId;
     }
 
-    public void setApprovalUrl(String approvalUrl) {
-        this.approvalUrl = approvalUrl;
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 }
