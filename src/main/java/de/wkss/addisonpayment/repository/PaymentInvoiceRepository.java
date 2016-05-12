@@ -1,16 +1,12 @@
 package de.wkss.addisonpayment.repository;
 
 import de.wkss.addisonpayment.dal.PaymentInvoice;
-import de.wkss.addisonpayment.dal.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Artur.Zeiler on 10.05.2016.
@@ -25,6 +21,20 @@ public class PaymentInvoiceRepository {
     public PaymentInvoice save(PaymentInvoice object) {
         redisTemplate.opsForValue().set(object.getPaymentId(), object);
         return findById(object.getPaymentId());
+    }
+
+
+    public List<PaymentInvoice> findPayments(String key){
+        List<PaymentInvoice> invoices = new LinkedList<>();
+
+        Set<String> keys = redisTemplate.keys(key + "_*");
+        Iterator<String> it = keys.iterator();
+
+        while(it.hasNext()){
+            invoices.add(findById(it.next()));
+        }
+
+        return invoices;
     }
 
     public PaymentInvoice findById(String key) {

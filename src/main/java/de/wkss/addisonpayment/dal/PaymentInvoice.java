@@ -11,7 +11,7 @@ public class PaymentInvoice implements Serializable {
     private String amount;
     private String billInvoiceId;
     private PaymentServiceData serviceData;
-    private StatePayment state;
+    private StatePayment state = StatePayment.OPEN;
 
     public PaymentInvoice() {
 
