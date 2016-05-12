@@ -8,24 +8,24 @@ import java.io.Serializable;
 public class PaymentInvoice implements Serializable {
     private String paymentId;
     private Person payer;
-    private double amount;
+    private String amount;
     private String billInvoiceId;
-    private PaymentServiceData remittee;
+    private PaymentServiceData serviceData;
     private StatePayment state;
 
-    public PaymentInvoice(String paymentId, Person payer, double amount, String billInvoiceId, PaymentServiceData remittee) {
+    public PaymentInvoice(String paymentId, Person payer, String amount, String billInvoiceId, PaymentServiceData serviceData) {
         this.paymentId = paymentId;
         this.payer = payer;
         this.amount = amount;
         this.billInvoiceId = billInvoiceId;
-        this.remittee = remittee;
+        this.serviceData = serviceData;
     }
 
-    public double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
@@ -53,12 +53,12 @@ public class PaymentInvoice implements Serializable {
         this.paymentId = paymentId;
     }
 
-    public PaymentServiceData getRemittee() {
-        return remittee;
+    public PaymentServiceData getServiceData() {
+        return serviceData;
     }
 
-    public void setRemittee(PaymentServiceData remittee) {
-        this.remittee = remittee;
+    public void setServiceData(PaymentServiceData serviceData) {
+        this.serviceData = serviceData;
     }
 
     public StatePayment getState() {

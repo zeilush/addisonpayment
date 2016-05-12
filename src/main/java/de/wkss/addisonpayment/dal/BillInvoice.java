@@ -16,7 +16,7 @@ public class BillInvoice implements Serializable {
     private Biller biller;
     private String amount;
     private String description;
-    private Base64 reason;
+    private String invoiceImageUrl;
     private StateBill state;
     private PaymentServiceData paymentServiceData;
     private String createDate;
@@ -43,14 +43,6 @@ public class BillInvoice implements Serializable {
 
     public String getId() {
         return id;
-    }
-
-    public Base64 getReason() {
-        return reason;
-    }
-
-    public void setReason(Base64 reason) {
-        this.reason = reason;
     }
 
     public PaymentServiceData getPaymentServiceData() {
@@ -82,5 +74,13 @@ public class BillInvoice implements Serializable {
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public String getInvoiceImageUrl() {
+        return invoiceImageUrl;
+    }
+
+    public void setInvoiceImageUrl(String invoiceImageUrl) {
+        this.invoiceImageUrl = invoiceImageUrl;
     }
 }

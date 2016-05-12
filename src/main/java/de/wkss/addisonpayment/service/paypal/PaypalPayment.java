@@ -32,7 +32,7 @@ public class PaypalPayment extends PaypalPayments {
 
     }
 
-    public Payment openPayment(String total) throws PayPalRESTException {
+    public Payment openPayment(String total, String cancelUrl, String returnUrl) throws PayPalRESTException {
         APIContext apiContext = new APIContext(accessToken);
 
         Amount amount = new Amount();
@@ -55,8 +55,8 @@ public class PaypalPayment extends PaypalPayments {
         payment.setTransactions(transactions);
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("https://www.facebook.com/Lunchbot-1713339108927283?cancel=true");
-        redirectUrls.setReturnUrl("https://www.facebook.com/Lunchbot-1713339108927283?success=true");
+        redirectUrls.setCancelUrl(cancelUrl);
+        redirectUrls.setReturnUrl(returnUrl);
 
         payment.setRedirectUrls(redirectUrls);
 

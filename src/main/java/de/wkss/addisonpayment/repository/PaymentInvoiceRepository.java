@@ -22,9 +22,9 @@ public class PaymentInvoiceRepository {
     @Qualifier(value = "redisTemplatePaymentInvoice")
     private RedisTemplate<String, PaymentInvoice> redisTemplate;
 
-    public PaymentInvoice save(PaymentInvoice person) {
-        redisTemplate.opsForValue().set(person.getPaymentId(), person);
-        return findById(person.getPaymentId());
+    public PaymentInvoice save(PaymentInvoice object) {
+        redisTemplate.opsForValue().set(object.getPaymentId(), object);
+        return findById(object.getPaymentId());
     }
 
     public PaymentInvoice findById(String key) {
