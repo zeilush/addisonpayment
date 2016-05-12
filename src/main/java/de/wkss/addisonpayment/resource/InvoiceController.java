@@ -44,10 +44,16 @@ public class InvoiceController {
 
     @RequestMapping("/invoice/{id}")
     public InvoiceContract getInvoice(@PathVariable String id){
-        InvoiceContract invoiceContract = new InvoiceContract();
-        invoiceContract.setName("<Name Billder>");
-        invoiceContract.setAmount(42);
-        invoiceContract.setDescription("This is a Description");
+
+        InvoiceContract invoiceContract = paymentService.lookUpPaymentInvoice(id);
+
+        if(invoiceContract == null){
+            invoiceContract = new InvoiceContract();
+            invoiceContract.setName("<Name Billder>");
+            invoiceContract.setAmount("42");
+            invoiceContract.setDescription("This is a Description");
+        }
+
         return invoiceContract;
     }
 

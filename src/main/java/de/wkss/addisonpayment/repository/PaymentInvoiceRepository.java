@@ -28,13 +28,26 @@ public class PaymentInvoiceRepository {
         List<PaymentInvoice> invoices = new LinkedList<>();
 
         Set<String> keys = redisTemplate.keys(key + "_*");
-        Iterator<String> it = keys.iterator();
 
+        Iterator<String> it = keys.iterator();
         while(it.hasNext()){
             invoices.add(findById(it.next()));
         }
 
         return invoices;
+    }
+
+    public PaymentInvoice findSinglePayment(String key){
+
+        PaymentInvoice invoice = null;
+
+        Set<String> keys = redisTemplate.keys("*_" + key);
+        Iterator<String> it = keys.iterator();
+        while(it.hasNext()){
+            invoice = findById(it.next());
+        }
+
+        return invoice;
     }
 
     public PaymentInvoice findById(String key) {
