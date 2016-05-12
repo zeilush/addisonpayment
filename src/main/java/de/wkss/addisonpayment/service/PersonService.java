@@ -2,6 +2,9 @@ package de.wkss.addisonpayment.service;
 
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.repository.PersonRepository;
+import de.wkss.addisonpayment.resource.InvoiceController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,11 +13,20 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PersonService {
+    private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
+
     @Autowired
     private PersonRepository personRepository;
 
     public Person createPerson(Person person) {
+        Person personToCreate = personRepository.findById(person.getReferenceId());
 
-        return null;
+        if(personToCreate == null) {
+            logger.info("create person:{}", person);
+
+            personToCreate = personRepository.save(person);
+        }
+
+        return personToCreate;
     }
 }

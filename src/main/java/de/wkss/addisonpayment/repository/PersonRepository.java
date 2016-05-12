@@ -22,8 +22,9 @@ public class PersonRepository {
     @Qualifier(value = "redisTemplatePerson")
     private RedisTemplate<String, Person> redisTemplate;
 
-    public void save(Person person) {
+    public Person save(Person person) {
         redisTemplate.opsForValue().set(person.getReferenceId(), person);
+        return findById(person.getReferenceId());
     }
 
     public Person findById(String key) {
