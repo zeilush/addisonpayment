@@ -1,14 +1,15 @@
 package de.wkss.addisonpayment.service;
 
-import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import de.wkss.addisonpayment.dal.*;
+import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
 import de.wkss.addisonpayment.repository.BillRepository;
-import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.repository.PaymentInvoiceRepository;
 import de.wkss.addisonpayment.resource.InvoiceController;
+import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
+import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
 import de.wkss.addisonpayment.service.paypal.PaypalPayment;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Artur.Zeiler on 10.05.2016.
@@ -97,9 +100,28 @@ public class PaymentService {
         result.setDescription(invoice.getDescription());
         result.setCreateDate(LocalDate.now().toString());
         result.setPaymentServiceData(new PayPalService());
-        result.setState(StateBill.TRANSFERRED_TO_BILLER);
+        result.setState(StateBill.OPEN);
         repo.save(result);
         return result;
+    }
+
+    @Transactional
+    public BillInvoiceContract lookUpBillInvoice(String id){
+        BillInvoice billInvoce = repo.findById(id);
+        BillInvoiceContract billInvoiceContract = new BillInvoiceContract();
+        billInvoiceContract.read(billInvoce);
+
+        List<PaymentInvoice> payments = paymentInvoiceRepository.findPayments(billInvoce.getId());
+
+        List<PaymentInvoiceContract> collect = payments.stream().map(invoice -> {
+            PaymentInvoiceContract pContract = new PaymentInvoiceContract();
+            pContract.read(invoice);
+            return pContract;
+        }).collect(Collectors.toList());
+        billInvoiceContract.setInvoices(collect);
+
+        return billInvoiceContract;
+
     }
 
 }

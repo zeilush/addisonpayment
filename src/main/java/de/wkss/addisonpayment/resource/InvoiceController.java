@@ -1,7 +1,11 @@
 package de.wkss.addisonpayment.resource;
 
 import com.paypal.base.rest.PayPalRESTException;
-import de.wkss.addisonpayment.dal.*;
+import de.wkss.addisonpayment.common.PaypalEvent;
+import de.wkss.addisonpayment.dal.BillInvoice;
+import de.wkss.addisonpayment.dal.Person;
+import de.wkss.addisonpayment.dal.StateBill;
+import de.wkss.addisonpayment.dal.StatePayment;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
@@ -60,52 +64,56 @@ public class InvoiceController {
 
 
     @RequestMapping(value = "/approve", method = RequestMethod.POST)
-    public void approveInvoicePost(@RequestBody Object body){
+    public void approveInvoicePost(@RequestBody PaypalEvent event){
 
-        logger.info("I want to approve");
-        logger.info(body.toString());
-        //comes from webhook
+        logger.info(event.toString());
 
+        switch (event.getEvent_type()){
+            case "PAYMENT.SALE.COMPLETED" : {
+                //payment success
+
+                break;
+            }
+            case "PAYMENT.PAYOUTSBATCH.SUCCESS" : {
+                //payout success
+                break;
+            }
+        }
     }
 
-    @RequestMapping(value = "/approve", method = RequestMethod.PUT)
-    public void approveInvoicePut(HttpServletRequest request){
-
-        logger.info("I will approve this");
-        HttpURI uri = ((Request) request).getUri();
-        logger.info(uri.toString());
-        //comes from webhook
-
-    }
 
     @RequestMapping("/getAllBillInvoice/{id}")
     public BillInvoiceContract getBillInvoice(@PathVariable String id){
-        BillInvoiceContract contract = new BillInvoiceContract();
-        contract.setAmount(10);
-        contract.setId(id);
-        Person person = new Person();
-        person.setName("Julian");
-        person.setReferenceId(UUID.randomUUID().toString());
-        contract.setBiller(person);
 
-        List<PaymentInvoiceContract> payers = new LinkedList<>();
-        person = new Person();
-        person.setName("DönerTier");
-        PaymentInvoiceContract invoiceContract = new PaymentInvoiceContract();
-        invoiceContract.setPayer(person);
-        invoiceContract.setState(StatePayment.OPEN);
-        payers.add(invoiceContract);
 
-        person = new Person();
-        person.setName("Salat");
-        invoiceContract = new PaymentInvoiceContract();
-        invoiceContract.setPayer(person);
-        invoiceContract.setState(StatePayment.PAYED);
-        payers.add(invoiceContract);
+        BillInvoiceContract contract = paymentService.lookUpBillInvoice(id);
+        if(contract == null){
+            contract = new BillInvoiceContract();
+            contract.setAmount("10");
+            contract.setId(id);
+            Person person = new Person();
+            person.setName("Julian");
+            person.setReferenceId(UUID.randomUUID().toString());
+            contract.setBiller(person);
 
-        contract.setInvoices(payers);
-        contract.setState(StateBill.PARTIALLY_COLLECTED);
+            List<PaymentInvoiceContract> payers = new LinkedList<>();
+            person = new Person();
+            person.setName("DönerTier");
+            PaymentInvoiceContract invoiceContract = new PaymentInvoiceContract();
+            invoiceContract.setPayer(person);
+            invoiceContract.setState(StatePayment.OPEN);
+            payers.add(invoiceContract);
 
+            person = new Person();
+            person.setName("Salat");
+            invoiceContract = new PaymentInvoiceContract();
+            invoiceContract.setPayer(person);
+            invoiceContract.setState(StatePayment.PAYED);
+            payers.add(invoiceContract);
+
+            contract.setInvoices(payers);
+            contract.setState(StateBill.PARTIALLY_COLLECTED);
+        }
         return contract;
 
     }
