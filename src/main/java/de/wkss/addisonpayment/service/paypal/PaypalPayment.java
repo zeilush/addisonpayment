@@ -6,6 +6,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -42,6 +43,17 @@ public class PaypalPayment extends PaypalPayments {
         Transaction transaction = new Transaction();
         transaction.setDescription("Lunchbox: there is an none payed lunch bill");
         transaction.setAmount(amount);
+
+        Item item = new Item();
+        item.setName("LunchBox");
+        item.setPrice(total);
+        item.setCurrency("EUR");
+        item.setQuantity("1");
+        List<Item> items = new LinkedList<>();
+        items.add(item);
+        ItemList itemList = new ItemList();
+        itemList.setItems(items);
+        transaction.setItemList(itemList);
 
         List<Transaction> transactions = new ArrayList<Transaction>();
         transactions.add(transaction);
