@@ -13,6 +13,10 @@ public class PaymentInvoice implements Serializable {
     private PaymentServiceData serviceData;
     private StatePayment state;
 
+    public PaymentInvoice() {
+
+    }
+
     public PaymentInvoice(String paymentId, Person payer, String amount, String billInvoiceId, PaymentServiceData serviceData) {
         this.paymentId = paymentId;
         this.payer = payer;

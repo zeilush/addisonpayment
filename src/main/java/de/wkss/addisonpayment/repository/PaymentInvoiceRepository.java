@@ -33,7 +33,6 @@ public class PaymentInvoiceRepository {
 
     public List<PaymentInvoice> findAll() {
         List<PaymentInvoice> books = new ArrayList<>();
-
         Set<String> keys = redisTemplate.keys("*");
         Iterator<String> it = keys.iterator();
 

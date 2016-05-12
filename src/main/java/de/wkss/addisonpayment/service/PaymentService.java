@@ -1,8 +1,10 @@
 package de.wkss.addisonpayment.service;
 
+import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import de.wkss.addisonpayment.dal.*;
+import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
 import de.wkss.addisonpayment.repository.BillRepository;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.repository.PaymentInvoiceRepository;
@@ -38,9 +40,57 @@ public class PaymentService {
     private PaymentInvoiceRepository paymentInvoiceRepository;
 
     @Transactional
-    public List<PaymentInvoice> createPayPalPayment(InvoiceDto invoice) throws PayPalRESTException {
+    public List<PaymentInvoiceDto> createPayPalPayment(InvoiceDto invoice) throws PayPalRESTException {
         logger.info("create payments, data: {}", invoice);
 
+        BillInvoice billInvoice = createBillInvoice(invoice);
+
+        List<PaymentInvoiceDto> paymentInvoiceDto = new ArrayList<>(invoice.getPayer().size());
+
+        for(Person payer : invoice.getPayer()) {
+
+            //create PayPal Payment
+            Payment payment = createPayPalPayment(invoice, payer);
+
+            //create payment invoice
+            createPaymentInvoice(billInvoice, payer, payment);
+
+            String approvalUrl = null;
+            for(Links link : payment.getLinks()) {
+                if(link.getRel().equals("approval_url")) {
+                    approvalUrl = link.getHref();
+                    break;
+                }
+            }
+
+            PaymentInvoiceDto dto = new PaymentInvoiceDto();
+            dto.setPayer(payer);
+            dto.setApprovalUrl(approvalUrl);
+
+            paymentInvoiceDto.add(dto);
+
+        }
+
+        return paymentInvoiceDto;
+    }
+
+    private Payment createPayPalPayment(InvoiceDto invoice, Person payer) throws PayPalRESTException {
+        logger.info("create payment for payer: {}", payer);
+
+        Payment payment = paypalPayment.openPayment(invoice.getAmount(), invoice.getCancelUrl(), invoice.getReturnUrl());
+
+        logger.info("payment created: {}", ReflectionToStringBuilder.toString(payment));
+        return payment;
+    }
+
+    private void createPaymentInvoice(BillInvoice billInvoice, Person payer, Payment payment) {
+        personService.createPerson(payer);
+
+        PaymentInvoice paymentInvoice = new PaymentInvoice(billInvoice.getId() + "_" + payment.getId(), payer, payment.getTransactions().get(0).getAmount().getTotal(), billInvoice.getId(), billInvoice.getPaymentServiceData());
+        paymentInvoiceRepository.save(paymentInvoice);
+    }
+
+    private BillInvoice createBillInvoice(InvoiceDto invoice) {
         BillInvoice result = new BillInvoice();
         result.setAmount(invoice.getAmount());
         result.setBiller(invoice.getBiller());
@@ -48,26 +98,8 @@ public class PaymentService {
         result.setCreateDate(LocalDate.now().toString());
         result.setPaymentServiceData(new PayPalService());
         result.setState(StateBill.TRANSFERRED_TO_BILLER);
-
         repo.save(result);
-
-        List<PaymentInvoice> paymentInvoices = new ArrayList<>(invoice.getPayer().size());
-
-        for(Person payer : invoice.getPayer()) {
-            logger.info("create payment for payer: {}", payer);
-
-            Payment payment = paypalPayment.openPayment(invoice.getAmount(), invoice.getCancelUrl(), invoice.getReturnUrl());
-
-            logger.info("payment created: {}", ReflectionToStringBuilder.toString(payment));
-
-            personService.createPerson(payer);
-
-            PaymentInvoice paymentInvoice = new PaymentInvoice(payment.getId(), payer, payment.getTransactions().get(0).getAmount().getTotal(), result.getId(), result.getPaymentServiceData());
-
-//            paymentInvoices.add(paymentInvoiceRepository.save(paymentInvoice));
-        }
-
-        return paymentInvoices;
+        return result;
     }
 
 }
