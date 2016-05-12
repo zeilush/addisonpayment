@@ -19,7 +19,7 @@ public class BillInvoice implements Serializable {
     private Base64 reason;
     private StateBill state;
     private PaymentServiceData paymentServiceData;
-    private LocalDate timestamp;
+    private String createDate;
 
     public BillInvoice() {
         id = UUID.randomUUID().toString();
@@ -76,11 +76,11 @@ public class BillInvoice implements Serializable {
         this.biller = biller;
     }
 
-    public LocalDate getTimestamp() {
-        return timestamp;
+    public String getCreateDate() {
+        return createDate;
     }
 
-    public void setTimestamp(LocalDate timestamp) {
-        this.timestamp = timestamp;
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }
