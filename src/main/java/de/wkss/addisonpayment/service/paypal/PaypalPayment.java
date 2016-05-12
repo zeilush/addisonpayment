@@ -36,7 +36,7 @@ public class PaypalPayment extends PaypalPayments {
         APIContext apiContext = new APIContext(accessToken);
 
         Amount amount = new Amount();
-        amount.setCurrency("USD");
+        amount.setCurrency("EUR");
         amount.setTotal(total);
 
         Transaction transaction = new Transaction();

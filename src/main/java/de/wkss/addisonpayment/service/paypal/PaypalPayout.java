@@ -17,7 +17,7 @@ public class PaypalPayout extends PaypalPayments {
     }
 
 
-    public void payOut(){
+    public boolean payOut(String targetPaypalAccount, String value) throws PayPalRESTException {
         Payout payout = new Payout();
 
         PayoutSenderBatchHeader senderBatchHeader = new PayoutSenderBatchHeader();
@@ -28,33 +28,31 @@ public class PaypalPayout extends PaypalPayments {
                 "There is your payout!");
 
         Currency amount = new Currency();
-        amount.setValue("31").setCurrency("USD");
+        amount.setValue(value).setCurrency("EUR");
 
         PayoutItem senderItem = new PayoutItem();
         senderItem.setRecipientType("Email")
-                .setNote("Thanks for using Lunchbox!")
-                .setReceiver("jdonauer@codegames.de")
+                .setNote(targetPaypalAccount)
+                .setReceiver(targetPaypalAccount)
                 .setSenderItemId("201404324234")
                 .setAmount(amount);
 
-        List<PayoutItem> items = new ArrayList<PayoutItem>();
+        List<PayoutItem> items = new ArrayList<>();
         items.add(senderItem);
 
         payout.setSenderBatchHeader(senderBatchHeader).
                 setItems(items);
 
         PayoutBatch batch = null;
-        try {
 
-            APIContext apiContext = new APIContext(accessToken);
+        APIContext apiContext = new APIContext(accessToken);
 
-            batch = payout.createSynchronous(apiContext);
+        batch = payout.createSynchronous(apiContext);
 
-            System.out.println("Payout Batch With ID: "
-                    + batch.getBatchHeader().getPayoutBatchId());
-        } catch (PayPalRESTException e) {
-            e.printStackTrace();
+        if("SUCCESS".equals(batch.getBatchHeader().getBatchStatus())){
+            return true;
         }
+        return false;
     }
 
 }
