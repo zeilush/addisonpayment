@@ -32,6 +32,11 @@
             <artifactId>swagger-jersey2-jaxrs</artifactId>
             <version>1.4.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>rest-api-sdk</artifactId>
+            <version>LATEST</version>
+        </dependency>
     </dependencies>
 
     <properties>
