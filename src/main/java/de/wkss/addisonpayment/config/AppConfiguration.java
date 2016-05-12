@@ -1,9 +1,16 @@
 package de.wkss.addisonpayment.config;
 
 import static springfox.documentation.builders.PathSelectors.regex;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.wkss.addisonpayment.dal.BillInvoice;
+import de.wkss.addisonpayment.dal.PaymentInvoice;
 import de.wkss.addisonpayment.dal.Person;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.hateoas.HypermediaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -12,6 +19,8 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import redis.clients.jedis.Protocol;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -29,20 +38,6 @@ import java.net.URISyntaxException;
 @Configuration
 @EnableSwagger2
 public class AppConfiguration {
-
-//    @Bean
-//    public Docket newsApi() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .groupName("greetings")
-//                .apiInfo(apiInfo())
-//                .pathMapping("/")
-//                .select()
-//                .apis(RequestHandlerSelectors.any())
-//                .paths(regex("/api/.*"))
-//                .build()
-//                .paths(regex("/*"))
-//                .build();
-//    }
 
     @Bean
     public Docket documentation() {
@@ -99,19 +94,19 @@ public class AppConfiguration {
     }
 
     @Bean
-    public JacksonJsonRedisSerializer<BillInvoice> jacksonJsonRedisJsonSerializer() {
-        JacksonJsonRedisSerializer<BillInvoice> jacksonJsonRedisJsonSerializer = new JacksonJsonRedisSerializer<>(BillInvoice.class);
-        return jacksonJsonRedisJsonSerializer;
-    }
-
-    @Bean
     @Qualifier(value = "redisTemplateBillInvoice")
     public RedisTemplate<String, BillInvoice> redisTemplateBillInvoice() {
         RedisTemplate<String, BillInvoice> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnFactory());
         redisTemplate.setKeySerializer(stringRedisSerializer());
-        redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializer());
+        redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializerBillInvoice());
         return redisTemplate;
+    }
+
+    @Bean
+    public JacksonJsonRedisSerializer<BillInvoice> jacksonJsonRedisJsonSerializerBillInvoice() {
+        JacksonJsonRedisSerializer<BillInvoice> jacksonJsonRedisJsonSerializer = new JacksonJsonRedisSerializer<>(BillInvoice.class);
+        return jacksonJsonRedisJsonSerializer;
     }
 
     @Bean
@@ -120,7 +115,29 @@ public class AppConfiguration {
         RedisTemplate<String, Person> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnFactory());
         redisTemplate.setKeySerializer(stringRedisSerializer());
-        redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializer());
+        redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializerPerson());
         return redisTemplate;
+    }
+
+    @Bean
+    public JacksonJsonRedisSerializer<Person> jacksonJsonRedisJsonSerializerPerson() {
+        JacksonJsonRedisSerializer<Person> jacksonJsonRedisJsonSerializer = new JacksonJsonRedisSerializer<>(Person.class);
+        return jacksonJsonRedisJsonSerializer;
+    }
+
+    @Bean
+    @Qualifier(value = "redisTemplatePaymentInvoice")
+    public RedisTemplate<String, PaymentInvoice> redisTemplatePaymentInvoice() {
+        RedisTemplate<String, PaymentInvoice> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(jedisConnFactory());
+        redisTemplate.setKeySerializer(stringRedisSerializer());
+        redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializerPaymentInvoice());
+        return redisTemplate;
+    }
+
+    @Bean
+    public JacksonJsonRedisSerializer<PaymentInvoice> jacksonJsonRedisJsonSerializerPaymentInvoice() {
+        JacksonJsonRedisSerializer<PaymentInvoice> jacksonJsonRedisJsonSerializer = new JacksonJsonRedisSerializer<>(PaymentInvoice.class);
+        return jacksonJsonRedisJsonSerializer;
     }
 }

@@ -7,6 +7,8 @@ import de.wkss.addisonpayment.dal.BillInvoice;
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.dal.StateBill;
 import de.wkss.addisonpayment.dal.StatePayment;
+import de.wkss.addisonpayment.dal.*;
+import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
@@ -111,7 +113,7 @@ public class InvoiceController {
             @ApiResponse(code = 200, message = "Success", response = BillInvoice.class),
             @ApiResponse(code = 500, message = "Failure")})
     @RequestMapping(method = RequestMethod.POST)
-    public BillInvoice createInvoice(@RequestBody InvoiceDto invoice) throws PayPalRESTException {
+    public List<PaymentInvoice> createInvoice(@RequestBody InvoiceDto invoice) throws PayPalRESTException {
         logger.info("REST API create invoice: " + invoice);
 
         return paymentService.createPayPalPayment(invoice);

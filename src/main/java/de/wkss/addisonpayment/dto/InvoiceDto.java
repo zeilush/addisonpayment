@@ -1,5 +1,6 @@
-package de.wkss.addisonpayment.common;
+package de.wkss.addisonpayment.dto;
 
+import de.wkss.addisonpayment.common.PaymentServiceType;
 import de.wkss.addisonpayment.dal.Biller;
 import de.wkss.addisonpayment.dal.Person;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -10,14 +11,13 @@ import java.util.List;
  * Created by Artur.Zeiler on 12.05.2016.
  */
 public class InvoiceDto {
+    private Biller biller;
     private List<Person> payer;
     private String description;
     private String amount;
     private PaymentServiceType paymentServiceType;
-    private String email;
-    private String cancelLink;
-    private String successLink;
-    private Biller biller;
+    private String cancelUrl;
+    private String returnUrl;
 
     public List<Person> getPayer() {
         return payer;
@@ -43,31 +43,6 @@ public class InvoiceDto {
         this.amount = amount;
     }
 
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCancelLink() {
-        return cancelLink;
-    }
-
-    public void setCancelLink(String cancelLink) {
-        this.cancelLink = cancelLink;
-    }
-
-    public String getSuccessLink() {
-        return successLink;
-    }
-
-    public void setSuccessLink(String successLink) {
-        this.successLink = successLink;
-    }
-
     public Biller getBiller() {
         return biller;
     }
@@ -87,5 +62,21 @@ public class InvoiceDto {
 
     public void setPaymentServiceType(PaymentServiceType paymentServiceType) {
         this.paymentServiceType = paymentServiceType;
+    }
+
+    public String getCancelUrl() {
+        return cancelUrl;
+    }
+
+    public void setCancelUrl(String cancelUrl) {
+        this.cancelUrl = cancelUrl;
+    }
+
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
     }
 }
