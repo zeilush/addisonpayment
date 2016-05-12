@@ -2,6 +2,7 @@ package de.wkss.addisonpayment.resource;
 
 import com.paypal.base.rest.PayPalRESTException;
 import de.wkss.addisonpayment.common.InvoiceDto;
+import de.wkss.addisonpayment.common.PaypalEvent;
 import de.wkss.addisonpayment.dal.BillInvoice;
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.dal.StateBill;
@@ -62,23 +63,16 @@ public class InvoiceController {
 
 
     @RequestMapping(value = "/approve", method = RequestMethod.POST)
-    public void approveInvoicePost(@RequestBody Object body){
+    public void approveInvoicePost(@RequestBody PaypalEvent body){
 
         logger.info("I want to approve");
         logger.info(body.toString());
         //comes from webhook
 
-    }
 
-    @RequestMapping(value = "/approve", method = RequestMethod.PUT)
-    public void approveInvoicePut(HttpServletRequest request){
-
-        logger.info("I will approve this");
-        HttpURI uri = ((Request) request).getUri();
-        logger.info(uri.toString());
-        //comes from webhook
 
     }
+
 
     @RequestMapping("/getAllBillInvoice/{id}")
     public BillInvoiceContract getBillInvoice(@PathVariable String id){
