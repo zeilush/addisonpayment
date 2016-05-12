@@ -3,6 +3,7 @@ package de.wkss.addisonpayment.config;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.wkss.addisonpayment.dal.BillInvoice;
@@ -139,5 +140,18 @@ public class AppConfiguration {
     public JacksonJsonRedisSerializer<PaymentInvoice> jacksonJsonRedisJsonSerializerPaymentInvoice() {
         JacksonJsonRedisSerializer<PaymentInvoice> jacksonJsonRedisJsonSerializer = new JacksonJsonRedisSerializer<>(PaymentInvoice.class);
         return jacksonJsonRedisJsonSerializer;
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        builder.featuresToEnable(
+                JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+
+        builder.featuresToEnable(
+                JsonParser.Feature.ALLOW_SINGLE_QUOTES);
+
+        return builder.build();
     }
 }
