@@ -21,8 +21,9 @@ public class BillRepository {
     @Qualifier(value = "redisTemplateBillInvoice")
     private RedisTemplate<String, BillInvoice> redisTemplate;
 
-    public void save(BillInvoice invoice) {
+    public BillInvoice save(BillInvoice invoice) {
         redisTemplate.opsForValue().set(invoice.getId(), invoice);
+        return findById(invoice.getId());
     }
 
     public BillInvoice findById(String key) {
