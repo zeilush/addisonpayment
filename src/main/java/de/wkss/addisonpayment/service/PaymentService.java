@@ -55,17 +55,17 @@ public class PaymentService {
             //create payment invoice
             createPaymentInvoice(billInvoice, payer, payment);
 
-            String approvalUrl = null;
-            for(Links link : payment.getLinks()) {
-                if(link.getRel().equals("approval_url")) {
-                    approvalUrl = link.getHref();
-                    break;
-                }
-            }
+//            String approvalUrl = null;
+//            for(Links link : payment.getLinks()) {
+//                if(link.getRel().equals("approval_url")) {
+//                    approvalUrl = link.getHref();
+//                    break;
+//                }
+//            }
 
             PaymentInvoiceDto dto = new PaymentInvoiceDto();
             dto.setPayer(payer);
-            dto.setApprovalUrl(approvalUrl);
+            dto.setPaymentId(payment.getId());
 
             paymentInvoiceDto.add(dto);
 
