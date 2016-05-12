@@ -50,7 +50,29 @@ public class InvoiceController {
     }
 
     @RequestMapping("/approve")
-    public void approveInvoice(HttpServletRequest request){
+    public void approveInvoiceGet(HttpServletRequest request){
+
+        logger.info("I will approve this");
+        HttpURI uri = ((Request) request).getUri();
+        logger.info(uri.toString());
+        //comes from webhook
+
+    }
+
+
+
+    @RequestMapping(value = "/approve", method = RequestMethod.POST)
+    public void approveInvoicePost(HttpServletRequest request){
+
+        logger.info("I will approve this");
+        HttpURI uri = ((Request) request).getUri();
+        logger.info(uri.toString());
+        //comes from webhook
+
+    }
+
+    @RequestMapping(value = "/approve", method = RequestMethod.PUT)
+    public void approveInvoicePut(HttpServletRequest request){
 
         logger.info("I will approve this");
         HttpURI uri = ((Request) request).getUri();
