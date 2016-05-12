@@ -2,6 +2,8 @@ package de.wkss.addisonpayment.config;
 
 import static springfox.documentation.builders.PathSelectors.regex;
 import de.wkss.addisonpayment.dal.BillInvoice;
+import de.wkss.addisonpayment.dal.Person;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -103,8 +105,19 @@ public class AppConfiguration {
     }
 
     @Bean
+    @Qualifier(value = "redisTemplateBillInvoice")
     public RedisTemplate<String, BillInvoice> redisTemplateBillInvoice() {
         RedisTemplate<String, BillInvoice> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(jedisConnFactory());
+        redisTemplate.setKeySerializer(stringRedisSerializer());
+        redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializer());
+        return redisTemplate;
+    }
+
+    @Bean
+    @Qualifier(value = "redisPersonTemplate")
+    public RedisTemplate<String, Person> redisTemplatePerson() {
+        RedisTemplate<String, Person> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnFactory());
         redisTemplate.setKeySerializer(stringRedisSerializer());
         redisTemplate.setValueSerializer(jacksonJsonRedisJsonSerializer());

@@ -1,6 +1,7 @@
 package de.wkss.addisonpayment.repository;
 
 import de.wkss.addisonpayment.dal.BillInvoice;
+import de.wkss.addisonpayment.dal.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,22 +16,22 @@ import java.util.Set;
  * Created by Artur.Zeiler on 10.05.2016.
  */
 @Repository
-public class BillRepository {
+public class PersonRepository {
 
     @Autowired
-    @Qualifier(value = "redisTemplateBillInvoice")
-    private RedisTemplate<String, BillInvoice> redisTemplate;
+    @Qualifier(value = "redisTemplatePerson")
+    private RedisTemplate<String, Person> redisTemplate;
 
-    public void save(BillInvoice invoice) {
-        redisTemplate.opsForValue().set(invoice.getId(), invoice);
+    public void save(Person person) {
+        redisTemplate.opsForValue().set(person.getReferenceId(), person);
     }
 
-    public BillInvoice findById(String key) {
+    public Person findById(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public List<BillInvoice> findAll() {
-        List<BillInvoice> books = new ArrayList<>();
+    public List<Person> findAll() {
+        List<Person> books = new ArrayList<>();
 
         Set<String> keys = redisTemplate.keys("*");
         Iterator<String> it = keys.iterator();
