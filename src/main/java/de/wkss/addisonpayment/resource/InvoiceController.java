@@ -62,11 +62,10 @@ public class InvoiceController {
 
 
     @RequestMapping(value = "/approve", method = RequestMethod.POST)
-    public void approveInvoicePost(HttpServletRequest request){
+    public void approveInvoicePost(@RequestBody Object body){
 
-        logger.info("I will approve this");
-        HttpURI uri = ((Request) request).getUri();
-        logger.info(uri.toString());
+        logger.info("I want to approve");
+        logger.info(body.toString());
         //comes from webhook
 
     }
