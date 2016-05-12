@@ -1,5 +1,6 @@
 package de.wkss.addisonpayment.resource.contracts;
 
+import de.wkss.addisonpayment.dal.BillInvoice;
 import de.wkss.addisonpayment.dal.PaymentServiceData;
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.dal.StateBill;
@@ -15,7 +16,7 @@ public class BillInvoiceContract {
 
     private String id;
     private Person biller;
-    private double amount;
+    private String amount;
     private String description;
     private StateBill state;
     private PaymentServiceData paymentServiceData;
@@ -23,11 +24,11 @@ public class BillInvoiceContract {
 
     private List<PaymentInvoiceContract> invoices = new LinkedList<>();
 
-    public double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
@@ -84,5 +85,14 @@ public class BillInvoiceContract {
 
     public void setInvoices(List<PaymentInvoiceContract> invoices) {
         this.invoices = invoices;
+    }
+
+    public void read(BillInvoice invoice){
+        this.amount = invoice.getAmount();
+        this.biller = invoice.getBiller();
+        this.description = invoice.getDescription();
+        this.id = invoice.getId();
+        this.state = invoice.getState();
+
     }
 }

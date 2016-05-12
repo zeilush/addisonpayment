@@ -1,5 +1,6 @@
 package de.wkss.addisonpayment.resource.contracts;
 
+import de.wkss.addisonpayment.dal.PaymentInvoice;
 import de.wkss.addisonpayment.dal.Person;
 import de.wkss.addisonpayment.dal.StatePayment;
 
@@ -24,5 +25,10 @@ public class PaymentInvoiceContract {
 
     public void setState(StatePayment state) {
         this.state = state;
+    }
+
+    public void read(PaymentInvoice invoice){
+        this.payer = invoice.getPayer();
+        this.state = invoice.getState();
     }
 }
