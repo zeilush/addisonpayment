@@ -18,6 +18,7 @@ public class InvoiceDto {
     private PaymentServiceType paymentServiceType;
     private String cancelUrl;
     private String returnUrl;
+    private String invoiceImageUrl;
 
     public List<Person> getPayer() {
         return payer;
@@ -78,5 +79,13 @@ public class InvoiceDto {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    public String getInvoiceImageUrl() {
+        return invoiceImageUrl;
+    }
+
+    public void setInvoiceImageUrl(String invoiceImageUrl) {
+        this.invoiceImageUrl = invoiceImageUrl;
     }
 }

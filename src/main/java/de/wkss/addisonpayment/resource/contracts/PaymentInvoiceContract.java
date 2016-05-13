@@ -10,6 +10,7 @@ import de.wkss.addisonpayment.domain.StatePayment;
 public class PaymentInvoiceContract {
     private Person payer;
     private StatePayment state;
+    private String amount;
 
     public Person getPayer() {
         return payer;
@@ -27,8 +28,17 @@ public class PaymentInvoiceContract {
         this.state = state;
     }
 
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
     public void read(PaymentInvoice invoice){
         this.payer = invoice.getPayer();
         this.state = invoice.getState();
+        this.amount = invoice.getAmount();
     }
 }

@@ -146,12 +146,10 @@ public class PaymentService {
     private void createPaymentInvoice(BillInvoice billInvoice, Person payer, Payment payment) {
         personService.createPerson(payer);
 
-        String token = null;
         String approvalUrl = null;
         for(Links link : payment.getLinks()) {
             if(link.getRel().equals("approval_url")) {
                 approvalUrl = link.getHref();
-                token = approvalUrl.split("token=")[1];
                 break;
             }
         }
@@ -169,6 +167,7 @@ public class PaymentService {
         result.setDescription(invoice.getDescription());
         result.setCreateDate(LocalDate.now().toString());
         result.setPaymentServiceData(new PayPalService());
+        result.setInvoiceImageUrl(invoice.getInvoiceImageUrl());
         result.setState(StateBill.OPEN);
         repo.save(result);
         return result;
