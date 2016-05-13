@@ -73,6 +73,7 @@ public class PaymentService {
         response.setPayer(paymentInvoice.getPayer());
         response.setBiller(billInvoice.getBiller());
         response.setBillInvoiceId(billInvoice.getId());
+        response.setAmout(paymentInvoice.getAmount());
 
         return response;
     }
