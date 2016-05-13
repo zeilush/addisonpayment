@@ -29,6 +29,12 @@ public class BillRepository {
     public BillInvoice findById(String key) {
         return redisTemplate.opsForValue().get(key);
     }
+//
+//    public BillInvoice findByBiller(String billerId) {
+//        System.out.println(findAll());
+//        return redisTemplate.opsForValue().get(billerId + "_*");
+//    }
+
 
     public List<BillInvoice> findAll() {
         List<BillInvoice> books = new ArrayList<>();

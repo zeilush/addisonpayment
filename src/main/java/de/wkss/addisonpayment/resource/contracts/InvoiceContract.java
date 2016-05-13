@@ -2,6 +2,7 @@ package de.wkss.addisonpayment.resource.contracts;
 
 import de.wkss.addisonpayment.domain.BillInvoice;
 import de.wkss.addisonpayment.domain.PaymentInvoice;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * Created by Julian.donauer on 12.05.2016.
@@ -46,12 +47,14 @@ public class InvoiceContract {
     }
 
     public void read(PaymentInvoice invoice, BillInvoice bill){
-        this.name = "Mocked";
         this.amount = invoice.getAmount();
         this.paypalLink = invoice.getApprovalLink();
         this.description = bill.getDescription();
         this.name = bill.getBiller().getName();
-
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
 }

@@ -7,7 +7,6 @@ import java.util.UUID;
  * Created by jan.plitschka on 12.05.2016.
  */
 public class BillInvoice implements Serializable {
-
     private String id;
     private Biller biller;
     private String amount;
@@ -16,10 +15,6 @@ public class BillInvoice implements Serializable {
     private StateBill state;
     private PaymentServiceData paymentServiceData;
     private String createDate;
-
-    public BillInvoice() {
-        id = UUID.randomUUID().toString();
-    }
 
     public String getAmount() {
         return amount;
@@ -78,5 +73,9 @@ public class BillInvoice implements Serializable {
 
     public void setInvoiceImageUrl(String invoiceImageUrl) {
         this.invoiceImageUrl = invoiceImageUrl;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

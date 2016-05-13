@@ -1,16 +1,12 @@
 package de.wkss.addisonpayment.resource;
 
 import com.paypal.base.rest.PayPalRESTException;
-import de.wkss.addisonpayment.common.PaypalEvent;
-import de.wkss.addisonpayment.domain.Person;
-import de.wkss.addisonpayment.domain.StateBill;
-import de.wkss.addisonpayment.domain.StatePayment;
 import de.wkss.addisonpayment.dto.ExcecutePayPalPaymentDto;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
+import de.wkss.addisonpayment.dto.PayoutResponseDto;
 import de.wkss.addisonpayment.resource.contracts.BillInvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
-import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
 import de.wkss.addisonpayment.service.PaymentService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -34,104 +27,60 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/invoice")
 public class PaymentController {
-
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Autowired
     private PaymentService paymentService;
 
-    @RequestMapping("/invoice/{id}")
+    @RequestMapping("/{id}")
     public InvoiceContract getInvoice(@PathVariable String id){
+        logger.info("REST API: get payment invoice, id: {}" + id);
 
         InvoiceContract invoiceContract = paymentService.lookUpPaymentInvoice(id);
 
-        if(invoiceContract == null){
-            invoiceContract = new InvoiceContract();
-            invoiceContract.setName("<Name Billder>");
-            invoiceContract.setAmount("42");
-            invoiceContract.setDescription("This is a Description");
-        }
+        logger.info("REST API: get payment invoice: {}" + invoiceContract);
 
         return invoiceContract;
     }
 
-    @RequestMapping(value = "/approve", method = RequestMethod.POST)
-    public void approveInvoicePost(@RequestBody PaypalEvent event){
-        logger.info(event.toString());
-
-        switch (event.getEvent_type()){
-            case "PAYMENT.SALE.COMPLETED" : {
-                //payment success
-
-                break;
-            }
-            case "PAYMENT.PAYOUTSBATCH.SUCCESS" : {
-                //payout success
-                break;
-            }
-        }
-    }
-
-
-    @RequestMapping("/getAllBillInvoice/{id}")
+    @RequestMapping("/bill/{id}")
     public BillInvoiceContract getBillInvoice(@PathVariable String id){
-        BillInvoiceContract contract = paymentService.lookUpBillInvoice(id);
-        if(contract == null){
-            contract = new BillInvoiceContract();
-            contract.setAmount("10");
-            contract.setId(id);
-            Person person = new Person();
-            person.setName("Julian");
-            person.setReferenceId(UUID.randomUUID().toString());
-            contract.setBiller(person);
+        logger.info("REST API: get bill invoice, id: {}" + id);
 
-            List<PaymentInvoiceContract> payers = new LinkedList<>();
-            person = new Person();
-            person.setName("DönerTier");
-            PaymentInvoiceContract invoiceContract = new PaymentInvoiceContract();
-            invoiceContract.setPayer(person);
-            invoiceContract.setState(StatePayment.OPEN);
-            payers.add(invoiceContract);
+        BillInvoiceContract contract = paymentService.lookUpBillInvoiceById(id);
 
-            person = new Person();
-            person.setName("Salat");
-            invoiceContract = new PaymentInvoiceContract();
-            invoiceContract.setPayer(person);
-            invoiceContract.setState(StatePayment.PAYED);
-            payers.add(invoiceContract);
+        logger.info("REST API: get bill invoice response: {}" + contract);
 
-            contract.setInvoices(payers);
-            contract.setState(StateBill.PARTIALLY_COLLECTED);
-        }
         return contract;
-
     }
 
-    @ApiOperation(value = "createInvoce")
+    @ApiOperation(value = "createInvoice")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = PaymentInvoiceDto.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Failure")})
     @RequestMapping(method = RequestMethod.POST)
     public List<PaymentInvoiceDto> createPayment(@RequestBody InvoiceDto invoice) throws PayPalRESTException {
-        logger.info("REST API create PayPal Payment: " + invoice);
+        logger.info("REST API: create PayPal Payment: " + invoice);
 
         List<PaymentInvoiceDto> dto = paymentService.createPayPalPayment(invoice);
 
-        logger.info("REST API create PayPal Payment comnpleted");
+        logger.info("REST API: create PayPal Payment comnpleted, response: {}", dto);
 
         return dto;
     }
 
-    @ApiOperation(value = "execute PayPal payment")
+    @ApiOperation(value = "execute PayPal Payout")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 500, message = "Failure")})
-    @RequestMapping(value="/payment/paypal" , method = RequestMethod.POST)
-    public void executePayPalPayout(@RequestBody ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
-        logger.info("REST API execute PayPal: " + dto);
+    @RequestMapping(value="/payout/paypal" , method = RequestMethod.POST)
+    public PayoutResponseDto executePayPalPayout(@RequestBody ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
+        logger.info("REST API: execute PayPal Payout: " + dto);
 
-        paymentService.executePayment(dto);
+        PayoutResponseDto response = paymentService.executePayment(dto);
 
-        logger.info("REST API execute completed");
+        logger.info("REST API: execute completed, response: {}", response);
+
+        return response;
     }
 }

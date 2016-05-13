@@ -6,21 +6,20 @@ import java.io.Serializable;
  * Created by jan.plitschka on 12.05.2016.
  */
 public class PaymentInvoice implements Serializable {
-    private String paymentId;
+    private String id;
     private Person payer;
     private String amount;
     private String billInvoiceId;
     private PaymentServiceData serviceData;
     private StatePayment state = StatePayment.OPEN;
     private String approvalLink;
-    private String providerPaymentId;
 
     public PaymentInvoice() {
 
     }
 
-    public PaymentInvoice(String paymentId, Person payer, String amount, String billInvoiceId, PaymentServiceData serviceData) {
-        this.paymentId = paymentId;
+    public PaymentInvoice(String id, Person payer, String amount, String billInvoiceId, PaymentServiceData serviceData) {
+        this.id = id;
         this.payer = payer;
         this.amount = amount;
         this.billInvoiceId = billInvoiceId;
@@ -51,12 +50,12 @@ public class PaymentInvoice implements Serializable {
         this.payer = payer;
     }
 
-    public String getPaymentId() {
-        return paymentId;
+    public String getId() {
+        return id;
     }
 
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public PaymentServiceData getServiceData() {

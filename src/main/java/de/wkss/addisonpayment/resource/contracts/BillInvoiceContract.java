@@ -4,6 +4,7 @@ import de.wkss.addisonpayment.domain.BillInvoice;
 import de.wkss.addisonpayment.domain.PaymentServiceData;
 import de.wkss.addisonpayment.domain.Person;
 import de.wkss.addisonpayment.domain.StateBill;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -20,7 +21,7 @@ public class BillInvoiceContract {
     private String description;
     private StateBill state;
     private PaymentServiceData paymentServiceData;
-    private LocalDate timestamp;
+    private String createdDate;
 
     private List<PaymentInvoiceContract> invoices = new LinkedList<>();
 
@@ -71,14 +72,6 @@ public class BillInvoiceContract {
         this.biller = biller;
     }
 
-    public LocalDate getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDate timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public List<PaymentInvoiceContract> getInvoices() {
         return invoices;
     }
@@ -93,6 +86,19 @@ public class BillInvoiceContract {
         this.description = invoice.getDescription();
         this.id = invoice.getId();
         this.state = invoice.getState();
+        this.createdDate = invoice.getCreateDate();
+    }
 
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 }

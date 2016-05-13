@@ -7,6 +7,7 @@ import de.wkss.addisonpayment.domain.*;
 import de.wkss.addisonpayment.dto.ExcecutePayPalPaymentDto;
 import de.wkss.addisonpayment.dto.InvoiceDto;
 import de.wkss.addisonpayment.dto.PaymentInvoiceDto;
+import de.wkss.addisonpayment.dto.PayoutResponseDto;
 import de.wkss.addisonpayment.repository.BillRepository;
 import de.wkss.addisonpayment.repository.PaymentInvoiceRepository;
 import de.wkss.addisonpayment.resource.PaymentController;
@@ -15,12 +16,10 @@ import de.wkss.addisonpayment.resource.contracts.InvoiceContract;
 import de.wkss.addisonpayment.resource.contracts.PaymentInvoiceContract;
 import de.wkss.addisonpayment.service.paypal.PaypalPayment;
 import de.wkss.addisonpayment.service.paypal.PaypalPayout;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -51,8 +50,9 @@ public class PaymentService {
     private PaymentInvoiceRepository paymentInvoiceRepository;
 
 
-    public void executePayment(ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
+    public PayoutResponseDto executePayment(ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
         PaymentInvoice paymentInvoice = paymentInvoiceRepository.findByPaymentId(dto.getPaymentId());
+        BillInvoice billInvoice = repo.findById(paymentInvoice.getBillInvoiceId());
 
         if(paymentInvoice.getState().equals(StatePayment.OPEN)) {
             logger.info("execute PayPal payment for payer {}, paymentId {}" + paymentInvoice.getPayer(), dto.getPaymentId());
@@ -63,25 +63,29 @@ public class PaymentService {
             paymentInvoiceRepository.save(paymentInvoice);
 
             //check if payout needs to be executed
-            executePayout(paymentInvoice.getBillInvoiceId());
-
-            return;
+            executePayout(billInvoice);
+        }
+        else {
+            logger.info("payment for payer {} with paymentId {} already done", paymentInvoice.getPayer(), dto.getPaymentId());
         }
 
-        logger.info("payment for payer {} with paymentId {} already done", paymentInvoice.getPayer(), dto.getPaymentId());
+        PayoutResponseDto response = new PayoutResponseDto();
+        response.setPayer(paymentInvoice.getPayer());
+        response.setBiller(billInvoice.getBiller());
+        response.setBillInvoiceId(billInvoice.getId());
+
+        return response;
     }
 
-    private void executePayout(String billInvoiceId) throws PayPalRESTException {
-        logger.info("check execute payout for bill invoice id {}", billInvoiceId);
-
-        BillInvoice billInvoice = repo.findById(billInvoiceId);
+    private void executePayout(BillInvoice billInvoice) throws PayPalRESTException {
+        logger.info("check execute payout for bill invoice id {}", billInvoice.getId());
 
         if(billInvoice.getState().equals(StateBill.OPEN)) {
             //check if all payments associated with the bill are paid
             boolean doPayout = paymentInvoiceRepository.findPayments(billInvoice.getId()).stream().filter(p -> p.getState() == StatePayment.OPEN).count() == 0;
 
             if(doPayout) {
-                logger.info("execute payout for bill invoice id {}", billInvoiceId);
+                logger.info("execute payout for bill invoice id {}", billInvoice.getId());
 
                 paypalPayout.payOut(billInvoice.getBiller().getEmail(), billInvoice.getAmount());
 
@@ -89,18 +93,17 @@ public class PaymentService {
 
                 repo.save(billInvoice);
 
-                logger.info("payout executed for bill invoice id {}", billInvoiceId);
+                logger.info("payout executed for bill invoice id {}", billInvoice.getId());
             }
             else {
-                logger.info("not all payments for bill {} are paid. payout can't be executed", billInvoiceId);
+                logger.info("not all payments for bill {} are paid. payout can't be executed", billInvoice.getId());
             }
         }
         else {
-            logger.info("payout for bill {} already done", billInvoiceId);
+            logger.info("payout for bill {} already done", billInvoice.getId());
         }
     }
 
-    @Transactional
     public List<PaymentInvoiceDto> createPayPalPayment(InvoiceDto invoice) throws PayPalRESTException {
         logger.info("create payments, data: {}", invoice);
 
@@ -160,6 +163,7 @@ public class PaymentService {
 
     private BillInvoice createBillInvoice(InvoiceDto invoice) {
         BillInvoice result = new BillInvoice();
+        result.setId(invoice.getBiller().getReferenceId());
         result.setAmount(invoice.getAmount());
         result.setBiller(invoice.getBiller());
         result.setDescription(invoice.getDescription());
@@ -170,13 +174,18 @@ public class PaymentService {
         return result;
     }
 
-    @Transactional
-    public BillInvoiceContract lookUpBillInvoice(String id){
-        BillInvoice billInvoce = repo.findById(id);
-        BillInvoiceContract billInvoiceContract = new BillInvoiceContract();
-        billInvoiceContract.read(billInvoce);
+    public BillInvoiceContract lookUpBillInvoiceById(String id){
+        BillInvoice billInvoice = repo.findById(id);
+        BillInvoiceContract billInvoiceContract = createBillInvoiceContract(billInvoice);
 
-        List<PaymentInvoice> payments = paymentInvoiceRepository.findPayments(billInvoce.getId());
+        return billInvoiceContract;
+    }
+
+    private BillInvoiceContract createBillInvoiceContract(BillInvoice billInvoice) {
+        BillInvoiceContract billInvoiceContract = new BillInvoiceContract();
+        billInvoiceContract.read(billInvoice);
+
+        List<PaymentInvoice> payments = paymentInvoiceRepository.findPayments(billInvoice.getId());
 
         List<PaymentInvoiceContract> collect = payments.stream().map(invoice -> {
             PaymentInvoiceContract pContract = new PaymentInvoiceContract();
@@ -184,14 +193,18 @@ public class PaymentService {
             return pContract;
         }).collect(Collectors.toList());
         billInvoiceContract.setInvoices(collect);
-
         return billInvoiceContract;
-
     }
+//
+//    public BillInvoiceContract lookUpBillInvoiceByBiller(String id){
+//        BillInvoice billInvoice = repo.findByBiller(id);
+//        BillInvoiceContract billInvoiceContract = createBillInvoiceContract(billInvoice);
+//
+//        return billInvoiceContract;
+//    }
 
     public InvoiceContract lookUpPaymentInvoice(String id){
         PaymentInvoice singlePayment = paymentInvoiceRepository.findByPaymentId(id);
-
         if(singlePayment == null){
             return null;
         }

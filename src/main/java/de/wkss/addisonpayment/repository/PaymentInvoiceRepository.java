@@ -19,8 +19,8 @@ public class PaymentInvoiceRepository {
     private RedisTemplate<String, PaymentInvoice> redisTemplate;
 
     public PaymentInvoice save(PaymentInvoice object) {
-        redisTemplate.opsForValue().set(object.getPaymentId(), object);
-        return findById(object.getPaymentId());
+        redisTemplate.opsForValue().set(object.getId(), object);
+        return findById(object.getId());
     }
 
 
