@@ -16,18 +16,33 @@ import java.util.Set;
  */
 @Repository
 public class BillRepository {
+    private static final String OBJECT_NAME = "BILL_INVOICE_";
 
     @Autowired
     @Qualifier(value = "redisTemplateBillInvoice")
     private RedisTemplate<String, BillInvoice> redisTemplate;
 
+    @Autowired
+    private PaymentInvoiceRepository invoiceRepository;
+
     public BillInvoice save(BillInvoice invoice) {
-        redisTemplate.opsForValue().set(invoice.getId(), invoice);
+        //delete existing references if invoice already exists
+        BillInvoice billInvoice = findById(invoice.getId());
+        if(billInvoice != null) {
+            invoiceRepository.deleteByInvoiceId(billInvoice.getId());
+        }
+
+        redisTemplate.opsForValue().set(OBJECT_NAME + invoice.getId(), invoice);
+        return findById(invoice.getId());
+    }
+
+    public BillInvoice update(BillInvoice invoice) {
+        redisTemplate.opsForValue().set(OBJECT_NAME + invoice.getId(), invoice);
         return findById(invoice.getId());
     }
 
     public BillInvoice findById(String key) {
-        return redisTemplate.opsForValue().get(key);
+        return redisTemplate.opsForValue().get(OBJECT_NAME + key);
     }
 //
 //    public BillInvoice findByBiller(String billerId) {
@@ -39,7 +54,7 @@ public class BillRepository {
     public List<BillInvoice> findAll() {
         List<BillInvoice> books = new ArrayList<>();
 
-        Set<String> keys = redisTemplate.keys("*");
+        Set<String> keys = redisTemplate.keys(OBJECT_NAME + "*");
         Iterator<String> it = keys.iterator();
 
         while(it.hasNext()){

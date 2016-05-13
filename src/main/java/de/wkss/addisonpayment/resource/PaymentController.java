@@ -69,12 +69,12 @@ public class PaymentController {
         return dto;
     }
 
-    @ApiOperation(value = "execute PayPal Payout")
+    @ApiOperation(value = "execute PayPal Payment")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),
             @ApiResponse(code = 500, message = "Failure")})
-    @RequestMapping(value="/payout/paypal" , method = RequestMethod.POST)
-    public PayoutResponseDto executePayPalPayout(@RequestBody ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
+    @RequestMapping(value="/payment/paypal" , method = RequestMethod.POST)
+    public PayoutResponseDto executePayPalPayment(@RequestBody ExcecutePayPalPaymentDto dto) throws PayPalRESTException {
         logger.info("REST API: execute PayPal Payout: " + dto);
 
         PayoutResponseDto response = paymentService.executePayment(dto);

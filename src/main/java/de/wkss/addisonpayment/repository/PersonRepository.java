@@ -16,31 +16,19 @@ import java.util.Set;
  */
 @Repository
 public class PersonRepository {
+    private static final String OBJECT_NAME = "PERSON_";
 
     @Autowired
     @Qualifier(value = "redisTemplatePerson")
     private RedisTemplate<String, Person> redisTemplate;
 
     public Person save(Person person) {
-        redisTemplate.opsForValue().set(person.getReferenceId(), person);
+        redisTemplate.opsForValue().set(OBJECT_NAME + person.getReferenceId(), person);
         return findById(person.getReferenceId());
     }
 
     public Person findById(String key) {
         return redisTemplate.opsForValue().get(key);
-    }
-
-    public List<Person> findAll() {
-        List<Person> books = new ArrayList<>();
-
-        Set<String> keys = redisTemplate.keys("*");
-        Iterator<String> it = keys.iterator();
-
-        while(it.hasNext()){
-            books.add(findById(it.next()));
-        }
-
-        return books;
     }
 
 }

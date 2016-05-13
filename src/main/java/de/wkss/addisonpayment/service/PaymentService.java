@@ -91,7 +91,7 @@ public class PaymentService {
 
                 billInvoice.setState(StateBill.COMPLETELY_COLLECTED);
 
-                repo.save(billInvoice);
+                repo.update(billInvoice);
 
                 logger.info("payout executed for bill invoice id {}", billInvoice.getId());
             }
