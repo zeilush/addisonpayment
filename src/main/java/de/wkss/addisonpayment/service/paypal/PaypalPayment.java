@@ -3,6 +3,8 @@ package de.wkss.addisonpayment.service.paypal;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,12 +16,16 @@ import java.util.List;
  */
 @Component
 public class PaypalPayment extends PaypalPayments {
+    private static final Logger logger = LoggerFactory.getLogger(PaypalPayment.class);
+
     public PaypalPayment() throws PayPalRESTException {
         super();
     }
 
     public Payment executePayment(String paymentID, String payerID) throws PayPalRESTException {
         APIContext apiContext = new APIContext(accessToken);
+
+        logger.info("accessToken {}", accessToken);
 
         Payment paymentSucced = new Payment();
         paymentSucced.setId(paymentID);
@@ -35,6 +41,8 @@ public class PaypalPayment extends PaypalPayments {
 
     public Payment openPayment(String total, String cancelUrl, String returnUrl) throws PayPalRESTException {
         APIContext apiContext = new APIContext(accessToken);
+
+        logger.info("accessToken {}", accessToken);
 
         Amount amount = new Amount();
         amount.setCurrency("EUR");
