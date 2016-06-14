@@ -43,6 +43,8 @@ public class PaypalPayment extends PaypalPayments {
         APIContext apiContext = new APIContext(accessToken);
 
         logger.info("accessToken {}", accessToken);
+        logger.info("requestId {}", apiContext.getRequestId());
+        logger.info("configurationMap {}", apiContext.getConfigurationMap());
 
         Amount amount = new Amount();
         amount.setCurrency("EUR");
